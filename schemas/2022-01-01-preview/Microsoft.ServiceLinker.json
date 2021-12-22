@@ -72,10 +72,13 @@
       "type": "object",
       "oneOf": [
         {
-          "$ref": "#/definitions/AzureServiceInfo"
+          "$ref": "#/definitions/AzureResourceInfo"
         },
         {
-          "$ref": "#/definitions/HttpServiceInfo"
+          "$ref": "#/definitions/ConfluentBootstrapServerInfo"
+        },
+        {
+          "$ref": "#/definitions/ConfluentSchemaRegistryInfo"
         }
       ],
       "properties": {},
@@ -276,49 +279,80 @@
       ],
       "description": "The authentication info when authType is userAssignedIdentity"
     },
-    "AzureServiceInfo": {
+    "AzureResourceInfo": {
       "type": "object",
       "properties": {
-        "serviceType": {
+        "resourceType": {
           "type": "string",
           "enum": [
-            "azureService"
+            "azureResource"
           ]
         },
-        "identifier":{
+        "id":{
           "type": "string",
           "description": "The resource Id of azure service."
         },
-        "subResource":{
-          "type": "string",
-          "description": "The sub resource name of azure service."
+        "extraProperties":{
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "properties": {}
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "Extra properties, as name-value pairs for resource specific properties."
         }
       },
       "required": [
-        "serviceType",
-        "identifier"
+        "resourceType",
+        "id"
       ],
       "description": "The target service info when service type is azure service"
     },
-    "HttpServiceInfo": {
+    "ConfluentBootstrapServerInfo": {
       "type": "object",
       "properties": {
-        "serviceType": {
+        "resourceType": {
           "type": "string",
           "enum": [
-            "httpService"
+            "confluentBootstrapServer"
           ]
         },
         "url":{
           "type": "string",
-          "description": "The url of http service."
+          "description": "The url of confluentBootstrapServer."
         }
       },
       "required": [
-        "serviceType",
+        "resourceType",
         "url"
       ],
-      "description": "The target service info when service type is general http service"
+      "description": "The target service info when service type is confluentBootstrapServer"
+    },
+    "ConfluentSchemaRegistryInfo": {
+      "type": "object",
+      "properties": {
+        "resourceType": {
+          "type": "string",
+          "enum": [
+            "confluentSchemaRegistry"
+          ]
+        },
+        "url":{
+          "type": "string",
+          "description": "The url of confluentSchemaRegistry."
+        }
+      },
+      "required": [
+        "resourceType",
+        "url"
+      ],
+      "description": "The target service info when service type is confluentSchemaRegistry"
     }
   }
 }
