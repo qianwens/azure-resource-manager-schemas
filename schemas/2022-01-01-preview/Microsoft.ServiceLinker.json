@@ -1,5 +1,5 @@
 {
-  "id": "https://schema.management.azure.com/schemas/2021-11-01-preview/Microsoft.ServiceLinker.json#",
+  "id": "https://schema.management.azure.com/schemas/2022-01-01-preview/Microsoft.ServiceLinker.json#",
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Microsoft.ServiceLinker",
   "description": "Microsoft ServiceLinker Resource Types",
@@ -11,7 +11,7 @@
         "apiVersion": {
           "type": "string",
           "enum": [
-            "2021-11-01-preview"
+            "2022-01-01-preview"
           ]
         },
         "name": {
