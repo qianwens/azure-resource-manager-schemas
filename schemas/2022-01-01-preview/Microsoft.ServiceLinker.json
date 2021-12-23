@@ -84,9 +84,31 @@
       "properties": {},
       "description": "The target service properties"
     },
-    "ConnectionConfigurationProperties":{
+    "LinkerProperties": {
       "type": "object",
       "properties": {
+        "targetService": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TargetServiceBase"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The target service properties"
+        },
+        "authInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/AuthInfoBase"
+            },
+            {
+              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
+            }
+          ],
+          "description": "The authentication info"
+        },
         "clientType": {
           "oneOf": [
             {
@@ -114,45 +136,6 @@
           "type": "string",
           "description": "connection scope in source service."
         }
-      },
-      "description": "The connection configuration properties"
-    },
-    "LinkerProperties": {
-      "type": "object",
-      "properties": {
-        "targetService": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/TargetServiceBase"
-            },
-            {
-              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
-            }
-          ],
-          "description": "The target service properties"
-        },
-        "authInfo": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/AuthInfoBase"
-            },
-            {
-              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
-            }
-          ],
-          "description": "The authentication info"
-        },
-        "ConnectionConfiguration": {
-          "oneOf": [
-            {
-              "$ref": "#/definitions/ConnectionConfigurationProperties"
-            },
-            {
-              "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
-            }
-          ],
-          "description": "The connection configuration properties"
-        }     
       },
       "description": "The properties of the linker."
     },
@@ -279,10 +262,62 @@
       ],
       "description": "The authentication info when authType is userAssignedIdentity"
     },
+    "AzureRedisProperties": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "redis"
+          ]
+        },
+        "database": {
+          "type": "string",
+          "description": "Redis database to connect."
+        }
+      },
+      "required": [
+        "type",
+        "database"
+      ],
+      "description": "The Redis database information"
+    },
+    "AzureKeyvaultProperties": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "keyvault"
+          ]
+        },
+        "connectAsKubernetesCsiDriver": {
+          "type": "boolean",
+          "description": "Connect Azure Keyvault by kubernetes Csi Driver if it is true. Default is false."
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "description": "The Redis database information"
+    },
+    "AzureResourcePropertiesBase":{
+      "type": "object",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/AzureRedisProperties"
+        },
+        {
+          "$ref": "#/definitions/AzureKeyvaultProperties"
+        }
+      ],
+      "properties": {},
+      "description": "The azure resource specific properties"
+    },
     "AzureResourceInfo": {
       "type": "object",
       "properties": {
-        "resourceType": {
+        "type": {
           "type": "string",
           "enum": [
             "azureResource"
@@ -292,24 +327,20 @@
           "type": "string",
           "description": "The resource Id of azure service."
         },
-        "extraProperties":{
+        "resourceProperties":{
           "oneOf": [
             {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              },
-              "properties": {}
+              "$ref": "#/definitions/AzureResourcePropertiesBase"
             },
             {
               "$ref": "https://schema.management.azure.com/schemas/common/definitions.json#/definitions/expression"
             }
           ],
-          "description": "Extra properties, as name-value pairs for resource specific properties."
+          "description": "The resource specific properties."
         }
       },
       "required": [
-        "resourceType",
+        "type",
         "id"
       ],
       "description": "The target service info when service type is azure service"
@@ -317,7 +348,7 @@
     "ConfluentBootstrapServerInfo": {
       "type": "object",
       "properties": {
-        "resourceType": {
+        "type": {
           "type": "string",
           "enum": [
             "confluentBootstrapServer"
@@ -329,7 +360,7 @@
         }
       },
       "required": [
-        "resourceType",
+        "type",
         "url"
       ],
       "description": "The target service info when service type is confluentBootstrapServer"
@@ -337,7 +368,7 @@
     "ConfluentSchemaRegistryInfo": {
       "type": "object",
       "properties": {
-        "resourceType": {
+        "type": {
           "type": "string",
           "enum": [
             "confluentSchemaRegistry"
@@ -349,7 +380,7 @@
         }
       },
       "required": [
-        "resourceType",
+        "type",
         "url"
       ],
       "description": "The target service info when service type is confluentSchemaRegistry"
